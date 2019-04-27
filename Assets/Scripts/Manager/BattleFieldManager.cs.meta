@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: eb7026345366f0d48b2df7ad19c1d45b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Hero: {fileID: 1826341910984437630, guid: 8971886ae4404594ea88f1ee1a3dfa49, type: 3}
+  - HurtDamageFX: {fileID: 355, guid: 57ff52a6b9d134c9689be872547ab590, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
