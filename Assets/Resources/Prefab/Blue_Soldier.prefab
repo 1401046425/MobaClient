@@ -504,7 +504,6 @@ GameObject:
   - component: {fileID: 5861975903223343345}
   - component: {fileID: -7567648239245420712}
   - component: {fileID: 1465762960}
-  - component: {fileID: 1180866499420769931}
   - component: {fileID: 8116169901815672115}
   - component: {fileID: 506704010131875797}
   - component: {fileID: 1707877408869609364}
@@ -614,19 +613,6 @@ MonoBehaviour:
         byteData: 
         byteDataArray: 
       Version: 1.5.9
---- !u!135 &1180866499420769931
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5770663962184154345}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 5
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!54 &8116169901815672115
 Rigidbody:
   m_ObjectHideFlags: 0

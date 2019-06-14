@@ -20,6 +20,10 @@ public class Arrow : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (target == null&&gameObject!=null)
+        {
+            Destroy(gameObject);
+        }
         MonoBehaviour obj = target as MonoBehaviour;
         if (obj)
         {
@@ -47,12 +51,14 @@ public class Arrow : MonoBehaviour
                 target.SendHurtRequest(10, OwnerIndex);
 
             Instantiate(HurtFX, new Vector3(collision.transform.position.x, collision.transform.position.y + 5.6f, collision.transform.position.z), Quaternion.identity);
-            Destroy(this.gameObject);
+
         }
         else if (collision.transform.CompareTag("Soldier"))
         {
             if (((HeroModel)BattleFieldManager.Instance.GetEntity(OwnerIndex)).ISME)
                 target.SendHurtRequest(10, OwnerIndex);
+            Instantiate(HurtFX, new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z), Quaternion.identity);
         }
+        Destroy(this.gameObject);
     }
 }

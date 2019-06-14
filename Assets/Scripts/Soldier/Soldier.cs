@@ -16,6 +16,10 @@ public class Soldier : EntityModel
     private bool ISEnemySoldier;
     private Vector3 MovePos;
     internal Vector3 Targetpos;
+    public Collider[] canseeColliders;
+    public float Distence = 10f;
+    public float Dis;
+    public GameObject Target;
     public void init(List<GameObject> List,BattleFieldCamp camp,int Id,bool ISAuto)
     {
         Index = Id;
@@ -40,6 +44,7 @@ public class Soldier : EntityModel
     {
         Soldier_Anim.SetFloat("SoldierMoveDis",navMeshAgent.velocity.magnitude);
         // MoveToTarget(FinalTarget);
+        canseeColliders = Physics.OverlapSphere(transform.position, Distence);
         if (ISEnemySoldier)
         {
             MovePos.x = DirX;
@@ -52,7 +57,20 @@ public class Soldier : EntityModel
             BattleFieldRequest.Instance.MoveRequest(navMeshAgent.velocity.x, navMeshAgent.velocity.y,transform.position,Index);
            // BattleFieldRequest.Instance.TestPosRequest(Index,transform.position);
         }
+
+        if (ISEnemySoldier)
+        {
+            Target = GetCurTarget();
+            Dis = Vector3.Distance(transform.position, Target.transform.position);
+            if (Dis < 3)
+            {
+                transform.LookAt(Target.transform);
+                PlayAttackAnim();
+            }
+        }
     }
+
+
 
     internal GameObject GetFinalTarget()
     {
@@ -66,31 +84,33 @@ public class Soldier : EntityModel
     }
     internal GameObject GetCurTarget()
     {
-        if (CurTargetList.Count == 0) return null;
-        if (CurTargetList[0]==null|| CurTargetList[0].GetComponent<EntityModel>().IsDead)
+        if (canseeColliders.Length == 0) return null;
+        EntityModel ColliderEntity=null;
+        GameObject FinalEntity = null;
+        float MinDis=1000;
+        foreach (var itemCollider in canseeColliders)
         {
-            CurTargetList.Remove(CurTargetList[0]);
-        }
+            ColliderEntity = itemCollider.GetComponent<EntityModel>();
+            if (ColliderEntity.Camp != Camp)
+            {
+                if (!ColliderEntity.IsDead)
+                {
+                   var dis= Vector3.Distance(ColliderEntity.transform.position, transform.position);
+                   if (dis < MinDis)
+                   {
+                       MinDis = dis;
+                       FinalEntity = ColliderEntity.gameObject;
+                   }
+                }
 
-        if (CurTargetList.Count == 0) return null;
-        return CurTargetList[0];
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        var Entity = other.GetComponent<EntityModel>();
-        if(!Entity)return;
-        if (Entity.IsDead) return;
-
-        if (Entity.Camp != Camp)
-        {
-            if(!CurTargetList.Contains(Entity.gameObject))
-                CurTargetList.Add(Entity.gameObject);
+            }
         }
+        return FinalEntity;
     }
+
     internal void PlayAttackAnim()
     {
         Soldier_Anim.SetTrigger("IsAttack");
-
     }
 
     internal void PlayDestory()
@@ -106,6 +126,7 @@ public class Soldier : EntityModel
     {
         Destroy(this.gameObject);
     }
+
     public void MoveToTarget(GameObject Target)
     {
         if (Target)

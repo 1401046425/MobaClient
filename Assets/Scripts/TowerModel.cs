@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TowerModel : EntityModel
 {
-    private GameObject Target;
+    public GameObject Target;
     public GameObject FireFB;
     private GameObject Fire;
     private LineRenderer Line;
@@ -11,10 +11,14 @@ public class TowerModel : EntityModel
     public int AttackDamage;
     public List<EntityModel> EnterEntity=new List<EntityModel>();
     // Start is called before the first frame update
-
+    public float Radius;
+    public bool isAttacking=false;
+    private const int FireBallMaxNumber=1;
+    public int FireBallNumber;
     private void Start()
     {
         BattleFieldManager.Instance.TowerList.Add(this);
+        Radius = GetComponent<SphereCollider>().radius;
         Line = transform.Find("Line").gameObject.GetComponent<LineRenderer>();
         if (Circle.activeSelf)
         {
@@ -26,8 +30,15 @@ public class TowerModel : EntityModel
 
     private void FixedUpdate()
     {
-        if (Target != null)
+
+        if (EnterEntity.Count > 0)
         {
+            Target = GetFirstEnterEntity().gameObject;
+
+        }
+        if (Target != null&& EnterEntity.Count > 0)
+        {
+
             Line.gameObject.SetActive(true);
             Line.SetPosition(0, transform.position + new Vector3(0, 5.3f, 0));
             Line.SetPosition(1, Target.transform.position + new Vector3(0, 1.4f, 0));
@@ -35,6 +46,11 @@ public class TowerModel : EntityModel
         else
         {
             Line.gameObject.SetActive(false);
+        }
+
+        if (EnterEntity.Count >0&&!isAttacking)
+        {
+            if(FireBallNumber<FireBallMaxNumber)Attack();
         }
     }
 
@@ -45,27 +61,22 @@ public class TowerModel : EntityModel
         {
 
             EnterEntity.Remove(EnterEntity[0]);
+            if(EnterEntity.Count>0) return GetFirstEnterEntity();
             if (EnterEntity.Count == 0) return null;
         }
 
         return EnterEntity[0];
     }
+
     private void OnTriggerEnter(Collider other)
     {
         var EnterINS = other.GetComponent<EntityModel>();
         if (!EnterINS) return;
         if (EnterINS.Camp == Camp) return;
         Circle.SetActive(true);
-        if(!EnterEntity.Contains(EnterINS))EnterEntity.Add(EnterINS);
-        Target = GetFirstEnterEntity().gameObject;
-        Debug.Log("炮塔攻击啦！！");
-        //只有炮塔攻击组中添加第一个才会进行攻击
-        if (EnterEntity.Count == 1)
-        {
-            Attack();
-        }
-
+        if (!EnterEntity.Contains(EnterINS)) EnterEntity.Add(EnterINS);
     }
+
 
     private void OnTriggerExit(Collider other)
     {
@@ -73,15 +84,7 @@ public class TowerModel : EntityModel
         if(!Entity)return;
         if (Entity.Camp != Camp)
         {
-            if (Entity != null)
-            {
-                if (EnterEntity.IndexOf(Entity) >= 1)
-                {
-
-                    EnterEntity.Remove(Entity);
-
-                }
-            }
+            EnterEntity.Remove(Entity);
             foreach (var VARIABLE in EnterEntity)
             {
                 if (VARIABLE.IsDead)
@@ -90,18 +93,24 @@ public class TowerModel : EntityModel
                 }
 
             }
-            Circle.SetActive(false);
-            Target = null;
         }
 
-
+        if (EnterEntity.Count <= 0)
+        {
+            Target = null;
+            Line.gameObject.SetActive(false);
+            Circle.SetActive(false);
+            FireBallNumber = 0;
+        }
 
     }
 
     private void Attack()
     {
         //创建火球
+        isAttacking = true;
         Fire = Instantiate(FireFB, transform.position + new Vector3(0, 5.6f, 0), Quaternion.identity);
+        FireBallNumber++;
         Fire.GetComponent<FireBallMove>().Target = this.Target;
         Fire.GetComponent<FireBallMove>().TouchCallBack = OnTouchCallBack;
     }
@@ -127,10 +136,9 @@ public class TowerModel : EntityModel
         {
             BattleFieldRequest.Instance.HurtRequest(obj.GetComponent<EntityModel>().Index, AttackDamage);
         }
-
-
+        FireBallNumber--;
+        isAttacking = false;
     }
-
 
     internal void PlayDestory()
     {

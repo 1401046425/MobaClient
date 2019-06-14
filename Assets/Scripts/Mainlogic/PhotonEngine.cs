@@ -15,6 +15,7 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     private Dictionary<OperationCode, Request> RequestDic = new Dictionary<OperationCode, Request>();
     public const string ServerIp = "localhost";
     private StatusCode Client_ConnectState;
+
     public void AddRequest(Request R)
     {
         RequestDic.Add(R.OpCode, R);
@@ -39,8 +40,8 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     {
         try
         {
-            DicTool.GetValue(RequestDic, (OperationCode)eventData.Code)
-.OnEvent(eventData);
+            DicTool.GetValue(RequestDic, (OperationCode) eventData.Code)
+                .OnEvent(eventData);
         }
         catch (Exception e)
         {
@@ -51,8 +52,8 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     //当客户端发送事件后服务器返回时执行↓这个函数
     public void OnOperationResponse(OperationResponse operationResponse)
     {
-        DicTool.GetValue(RequestDic, (OperationCode)operationResponse.OperationCode)
-                    .OnOperationRespionse(operationResponse);
+        DicTool.GetValue(RequestDic, (OperationCode) operationResponse.OperationCode)
+            .OnOperationRespionse(operationResponse);
         return;
     }
 
@@ -70,7 +71,7 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     private IEnumerator LoudHero(int Playerindex, HeroType heroType)
     {
         yield return new WaitForEndOfFrame();
-        var BF = (BattleFieldRequest)DicTool.GetValue(RequestDic, OperationCode.BattleField);
+        var BF = (BattleFieldRequest) DicTool.GetValue(RequestDic, OperationCode.BattleField);
         Debug.Log("加载英雄ID" + Playerindex);
         ClientIndex = Playerindex;
         yield return new WaitForEndOfFrame();
@@ -89,6 +90,7 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
             DontDestroyOnLoad(this.gameObject);
             Instantiate(MachingManager);
         }
+
         Application.targetFrameRate = 30;
     }
 
@@ -127,6 +129,8 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
 
     private void OnGUI()
     {
-        GUI.Box(new Rect(10, 10, 100, 90), Client_ConnectState.ToString());
+        GUIStyle style=new GUIStyle();
+        style.fontStyle = FontStyle.Bold;
+        GUI.Label(new Rect(Screen.width*0.93f, Screen.height*0.98f,10,10), "连接状态:"+Client_ConnectState.ToString(),style);
     }
 }

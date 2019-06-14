@@ -4362,6 +4362,7 @@ MonoBehaviour:
   Circle: {fileID: 1283960524}
   AttackDamage: 10
   EnterEntity: []
+  Radius: 0
 --- !u!4 &1741230261
 Transform:
   m_ObjectHideFlags: 0
@@ -4723,7 +4724,7 @@ MonoBehaviour:
   TowerList: []
   SoldierList: []
   JOINNUM: 0
-  MyCamp: 0
+  MyCamp: 1
   IP: 
 --- !u!1 &1930943470
 GameObject:
@@ -22598,6 +22599,7 @@ MonoBehaviour:
   Circle: {fileID: 1118753698}
   AttackDamage: 0
   EnterEntity: []
+  Radius: 0
 --- !u!1 &1966486540
 GameObject:
   m_ObjectHideFlags: 0
@@ -27908,6 +27910,7 @@ MonoBehaviour:
   Circle: {fileID: 55464399}
   AttackDamage: 10
   EnterEntity: []
+  Radius: 0
 --- !u!114 &2008799993
 MonoBehaviour:
   m_ObjectHideFlags: 0

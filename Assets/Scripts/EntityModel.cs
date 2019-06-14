@@ -2,7 +2,7 @@
 
 public class EntityModel : MonoBehaviour,IHurtObject
 {
-    public bool IsDead;
+    public bool IsDead=false;
 
     public BattleFieldCamp Camp;
     public int Health;
@@ -32,7 +32,7 @@ public class EntityModel : MonoBehaviour,IHurtObject
         IsDead = true;
     }
 
-    public void SendHurtRequest(int HurtValue, int ObjectID)
+    public virtual void SendHurtRequest(int HurtValue, int ObjectID)
     {
         if(BattleFieldManager.Instance.GetEntity(ObjectID)!=null&&BattleFieldManager.Instance.GetEntity(ObjectID).Camp==BattleFieldManager.Instance.MyCamp)
             BattleFieldRequest.Instance.HurtRequest(Index, HurtValue);
