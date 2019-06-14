@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Experimental.PlayerLoop;
 
 [RequireComponent(typeof(HeroModel))]
 public class HeroMove : MonoBehaviour
@@ -37,13 +38,15 @@ public class HeroMove : MonoBehaviour
     private void Update()
     {
         SendAxis2Server();
+        //Model.GetBFRequest().TestPosRequest(Model.Index, transform.position);
+
     }
 
     private void FixedUpdate()
     {
-        Model.GetBFRequest().TestPosRequest(Model.PlayerIndex, transform.position);
         Move();
     }
+
 
     #endregion 生命周期
 
@@ -53,35 +56,35 @@ public class HeroMove : MonoBehaviour
     internal float DirZ;
     public float Speed;
     [HideInInspector] public float OrinSpeed;
-    private float Movepara;
+   // private float Movepara;
     private Joystick joystick;
     private Vector3 moveVector;
-
+    private Vector3 MovePos;
     private void SendAxis2Server()
     {
         if (Model.ISME && Model.GetBFManager().JOINNUM == 2)
         {
-            if (Model.PlayerIndex == 1)
+            if (Model.Index == 1)
             {
                 moveVector = (Vector3.right * ETCInput.GetAxis("Vertical") + Vector3.back * ETCInput.GetAxis("Horizontal"));
             }
-            else if (Model.PlayerIndex == 2)
+            else if (Model.Index == 2)
             {
                 moveVector = (Vector3.left * ETCInput.GetAxis("Vertical") + Vector3.forward * ETCInput.GetAxis("Horizontal"));
             }
+            BattleFieldRequest.Instance.MoveRequest(moveVector.x, moveVector.z, transform.position, BattleFieldManager.Instance.MyPlayerIndex);
 
-            if (ETCInput.GetAxis("Vertical") + ETCInput.GetAxis("Horizontal") != Movepara)
-            {
-                BattleFieldRequest.Instance.MoveRequest(moveVector.x, moveVector.z, transform.position);
-                Movepara = ETCInput.GetAxis("Vertical") + ETCInput.GetAxis("Horizontal");
-            }
+            //if (ETCInput.GetAxis("Vertical") + ETCInput.GetAxis("Horizontal") != Movepara)
+            //{
+            //    Movepara = ETCInput.GetAxis("Vertical") + ETCInput.GetAxis("Horizontal");
+            //}
         }
     }//发送输入轴给服务器
 
     private IEnumerator TestPlayerPos()
     {
         yield return new WaitForSeconds(1);
-        BattleFieldRequest.Instance.TestPosRequest(Model.PlayerIndex, transform.position);
+        BattleFieldRequest.Instance.TestPosRequest(Model.Index, transform.position);
         StartCoroutine(TestPlayerPos());
         yield return null;
     }//检测玩家坐标位置
@@ -99,10 +102,11 @@ public class HeroMove : MonoBehaviour
                 Model.Hero_Animator.SetTrigger("AttackToRun");
             }
         }
-        var NEWPOS = new Vector3(DirX, 0, DirZ);
-        if (DirX != 0 || DirZ != 0) transform.rotation = Quaternion.LookRotation(NEWPOS);
-        HBNavMeshAgent.velocity = (NEWPOS / Mathf.PI) * Speed;
-        Model.Hero_Animator.SetFloat("Speed", NEWPOS.magnitude);
+        MovePos.x = DirX;
+        MovePos.z = DirZ;
+        HBNavMeshAgent.velocity = (MovePos/Mathf.PI) * Speed;
+        if (DirX != 0 || DirZ != 0) transform.rotation = Quaternion.LookRotation(MovePos);
+        Model.Hero_Animator.SetFloat("Speed", MovePos.magnitude);
     }//移动角色
 
     #endregion 移动

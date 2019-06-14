@@ -8,10 +8,10 @@ public class LB_LightingTrigger_Profile : MonoBehaviour
     private MobileColorGrading current;
     private MobileColorGrading temp;
 
-    [Tooltip("target profile for blending from current to it - Target")]
+    [Tooltip("target profile for blending from current to it - FinalTarget")]
     public MobileColorGrading targetProfile;
 
-    [Tooltip("Target camera tag for trigger enter and exit")]
+    [Tooltip("FinalTarget camera tag for trigger enter and exit")]
     public string cameraTag = "MainCamera";
 
     [Tooltip("Blend lerp speed * Time.deltaTime")]

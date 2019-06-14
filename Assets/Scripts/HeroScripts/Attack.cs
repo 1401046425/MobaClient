@@ -18,7 +18,7 @@ public class Attack : MonoBehaviour, IPointerClickHandler
     {
         if (BattleFieldManager.Instance.MyPlayerIndex != 0)
         {
-            _HeroAtk = BattleFieldManager.Instance.GetPlayer(BattleFieldManager.Instance.MyPlayerIndex).GetComponent<HeroAttack>();
+            _HeroAtk = BattleFieldManager.Instance.GetEntity(BattleFieldManager.Instance.MyPlayerIndex).GetComponent<HeroAttack>();
         }
     }
 

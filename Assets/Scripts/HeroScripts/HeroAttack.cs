@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Common;
 using System;
+using BehaviorDesigner.Runtime.Tasks.Basic.UnityTransform;
 
 [RequireComponent(typeof(HeroModel))]
 public class HeroAttack : MonoBehaviour
@@ -37,39 +38,84 @@ public class HeroAttack : MonoBehaviour
 
     public bool IsAttacking = false;
     public IHurtObject Hurttarget;
-    public HeroModel AttargetPlayer;
+    public EntityModel AttargetPlayer;
     public GameObject Arrow;
     public GameObject Handposition;
     public int Damage;
     public GameObject Skill1FX;
-
+    public float Distence=5;
+   public List<EntityModel> Targetlist=new List<EntityModel>();
     // Start is called before the first frame update
-
+    public Collider[] hitColliders;
     private void Tm_CollisionEnter(object sender, RFX4_TransformMotion.RFX4_CollisionInfo e)
     {
-        if (e.Hit.transform.CompareTag("Hero") && e.Hit.transform.GetComponent<HeroModel>().PlayerIndex != BattleFieldManager.Instance.MyPlayerIndex)
+        if (e.Hit.transform.CompareTag("Hero") && e.Hit.transform.GetComponent<HeroModel>().Index != BattleFieldManager.Instance.MyPlayerIndex)
         {
             Debug.Log(e.Hit.transform.name);
             //发伤害请求
-            Model.GetBFRequest().HurtRequest(e.Hit.transform.GetComponent<HeroModel>().PlayerIndex, 20);
+            Model.GetBFRequest().HurtRequest(e.Hit.transform.GetComponent<HeroModel>().Index, 20);
         }
         //will print collided object name to the console.
     }
 
     // Update is called once per frame
+    EntityModel GetCloseEnterEntity(Collider[] colliders)
+    {
+        Targetlist.Clear();
+        foreach (var VARIABLE in colliders)
+        {
+            var EnterTarget = VARIABLE.GetComponent<EntityModel>();
 
+            if (EnterTarget&& EnterTarget.Camp != Hero_Model.Camp&& !EnterTarget.IsDead)
+            {
+                if (!Targetlist.Contains(EnterTarget))
+                {
+                    Targetlist.Add(EnterTarget);
+                }
+
+            }
+        }
+
+        float min_distence = Distence*10;
+        EntityModel FinalTarget = null;
+        foreach (var item in Targetlist)
+        {
+            if (item.Index < 10)
+            {
+                FinalTarget = item;
+                break;
+            }
+            var Dis=  Vector3.Distance(item.transform.position, transform.position);
+           if (Dis < min_distence)
+           {
+               min_distence = Dis;
+               FinalTarget = item;
+           }
+        }
+
+        return FinalTarget;
+    }
     public void Attack(AttackType attackType)
     {
         if (IsAttacking == false && Model.Hero_Animator.GetBool("EndAttack") == true)
         {
+            hitColliders = Physics.OverlapSphere(transform.position, Distence);
+            var Target = GetCloseEnterEntity(hitColliders);
+            if (Target == null)return;
+            if (Model.ISME) Model.GetBFRequest().AttackRequest(Target.Index, BattleFieldManager.Instance.MyPlayerIndex, attackType);
+            
+        }
+        return;
+        if (IsAttacking == false && Model.Hero_Animator.GetBool("EndAttack") == true)
+        {
             foreach (var item in Model.GetBFManager().PlayerList)
             {
-                if (item.PlayerIndex != Model.GetBFManager().MyPlayerIndex)
+                if (item.Index != Model.GetBFManager().MyPlayerIndex)
                 {
                     var dir = Vector3.Distance(item.transform.position, this.transform.position);
                     if (dir < 7.5f)
                     {
-                        if (Model.ISME) Model.GetBFRequest().AttackRequest(item.PlayerIndex, BattleFieldManager.Instance.MyPlayerIndex, attackType);
+                        if (Model.ISME) Model.GetBFRequest().AttackRequest(item.Index, BattleFieldManager.Instance.MyPlayerIndex, attackType);
                         return;
                     }
                 }
@@ -82,25 +128,29 @@ public class HeroAttack : MonoBehaviour
                 var dir = Vector3.Distance(item.transform.position, this.transform.position);
                 if (dir < 7.5f)
                 {
-                    if (Model.ISME) Model.GetBFRequest().AttackRequest(item.TowerIndex, Model.GetBFManager().MyPlayerIndex, attackType);
+                    if (Model.ISME) Model.GetBFRequest().AttackRequest(item.Index, Model.GetBFManager().MyPlayerIndex, attackType);
                     return;
                 }
             }
         }
     }
 
+
+
+
     public void AttackAnimation(int HurtPlayerIndex, int AttackPlayerIndex)
     {
-        if (HurtPlayerIndex >= 1000)
-        {
-            if (Model.GetBFManager().GetTower(HurtPlayerIndex).TowerCamp == Model.GetBFManager().GetPlayer(AttackPlayerIndex).HeroCamp) return;
-            Hurttarget = Model.GetBFManager().GetTower(HurtPlayerIndex);
-        }
-        else
-        {
-            Hurttarget = Model.GetBFManager().GetPlayer(HurtPlayerIndex);
-        }
-        AttargetPlayer = Model.GetBFManager().GetPlayer(AttackPlayerIndex);
+        Hurttarget = Model.GetBFManager().GetEntity(HurtPlayerIndex);
+        //if (HurtPlayerIndex >= 1000)
+        //{
+        //    if (Model.GetBFManager().GetTower(HurtPlayerIndex).Camp == Model.GetBFManager().GetEntity(AttackPlayerIndex).Camp) return;
+        //    Hurttarget = Model.GetBFManager().GetTower(HurtPlayerIndex);
+        //}
+        //else
+        //{
+        //    Hurttarget = Model.GetBFManager().GetEntity(HurtPlayerIndex);
+        //}
+        AttargetPlayer = Model.GetBFManager().GetEntity(AttackPlayerIndex);
         var HurtObj = Hurttarget as MonoBehaviour;
         transform.LookAt(HurtObj.transform);
         Model.Hero_Animator.SetBool("EndAttack", false);
@@ -113,8 +163,8 @@ public class HeroAttack : MonoBehaviour
         //实例化弓箭
         var AttOBJ_Arr = Instantiate(Arrow, Handposition.transform.position, Quaternion.identity);
         var Aro = AttOBJ_Arr.GetComponent<Arrow>();
-        Aro.OwnerIndex = AttargetPlayer.PlayerIndex;
-        Aro.ArrowCamp = AttargetPlayer.HeroCamp;
+        Aro.OwnerIndex = AttargetPlayer.Index;
+        Aro.ArrowCamp = AttargetPlayer.Camp;
         Aro.target = Hurttarget;
         IsAttacking = false;
     }
@@ -135,8 +185,8 @@ public class HeroAttack : MonoBehaviour
 
     public void PlaySkill1Animation(int HurtPlayerIndex, int AttackPlayerIndex)
     {
-        Hurttarget = Model.GetBFManager().GetPlayer(HurtPlayerIndex);
-        AttargetPlayer = Model.GetBFManager().GetPlayer(AttackPlayerIndex);
+        Hurttarget = Model.GetBFManager().GetEntity(HurtPlayerIndex);
+        AttargetPlayer = Model.GetBFManager().GetEntity(AttackPlayerIndex);
         var HurtObj = Hurttarget as MonoBehaviour;
         transform.LookAt(HurtObj.transform);
         Model.Hero_Animator.SetBool("EndAttack", false);

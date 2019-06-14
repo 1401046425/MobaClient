@@ -21,9 +21,14 @@ public class FireBallMove : MonoBehaviour
     private void FixedUpdate()
     {
         //移动
-        //transform.LookAt(Target.transform.position);
+        //transform.LookAt(FinalTarget.transform.position);
+        if (Target == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         var Dir = Target.transform.position - transform.position;
-        transform.Translate(Dir * Speed * Time.fixedDeltaTime);
+        transform.Translate(Dir.normalized * Speed * Time.fixedDeltaTime);
         //碰撞检测
         if (Dir.magnitude < 0.3f)
         {

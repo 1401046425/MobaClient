@@ -38,7 +38,7 @@ public class BattleFieldRequest : Request
             else if (dataCode == ParaCode.BF_DestoryOnline)
             {
                 var playerindex = (int)DicTool.GetValue(data.Parameters, (byte)ParaCode.BF_DestoryOnline);
-                BattleFieldManager.Instance.DestoryPlayer(playerindex);
+                BattleFieldManager.Instance.DestoryEntity(playerindex);
             }
             else if (dataCode == ParaCode.BF_Ending)
             {
@@ -53,13 +53,13 @@ public class BattleFieldRequest : Request
             {
                 var para = (string)DicTool.GetValue(data.Parameters, (byte)ParaCode.BF_Move);
                 var list = para.Split(',');
-                BattleFieldManager.Instance.MovePlayer(Convert.ToInt32(list[0]), float.Parse(list[1]), float.Parse(list[2]), float.Parse(list[3]), float.Parse(list[4]), float.Parse(list[5]));
+                BattleFieldManager.Instance.MoveEntity(Convert.ToInt32(list[0]), float.Parse(list[1]), float.Parse(list[2]), float.Parse(list[3]), float.Parse(list[4]), float.Parse(list[5]));
             }
             else if (dataCode == ParaCode.BF_Test_Pos)
             {
                 var para = (string)DicTool.GetValue(data.Parameters, (byte)ParaCode.BF_Test_Pos);
                 var list = para.Split(',');
-                BattleFieldManager.Instance.TestPlayerPos(Convert.ToInt32(list[0]), float.Parse(list[1]), float.Parse(list[2]), float.Parse(list[3]));
+                BattleFieldManager.Instance.TestEntityPos(Convert.ToInt32(list[0]), float.Parse(list[1]), float.Parse(list[2]), float.Parse(list[3]));
             }
             else if (dataCode == ParaCode.BF_Attack)
             {
@@ -71,12 +71,13 @@ public class BattleFieldRequest : Request
             {
                 var para = (string)DicTool.GetValue(data.Parameters, (byte)ParaCode.BF_Hurt);
                 var list = para.Split(',');
+                Debug.Log(int.Parse(list[0])+"");
                 BattleFieldManager.Instance.HurtTarget(int.Parse(list[0]), int.Parse(list[1]));
             }
             else if (dataCode == ParaCode.BF_Destory)
             {
                 var para = (int)DicTool.GetValue(data.Parameters, (byte)ParaCode.BF_Destory);
-                BattleFieldManager.Instance.DestoryTarget(para);
+                BattleFieldManager.Instance.DestoryEntity(para);
             }
         }
     }
@@ -133,16 +134,16 @@ public class BattleFieldRequest : Request
         PhotonEngine.peer.OpCustom((byte)OpCode, data, true);
     }
 
-    internal void MoveRequest(float posX, float posY, Vector3 pos)
+    internal void MoveRequest(float posX, float posY, Vector3 pos,int Index)
     {
         //发送操作数据
-        if (curX == (float)Math.Round(posX, 1) && curY == (float)Math.Round(posY, 1)) return;
+       // if (curX == (float)Math.Round(posX, 1) && curY == (float)Math.Round(posY, 1)) return;
         curX = (float)Math.Round(posX, 1);
         curY = (float)Math.Round(posY, 1);
         var data = new Dictionary<byte, object>
         {
             { (byte)ParaType.BFSendEvent, ParaCode.BF_Move },
-            { (byte)ParaCode.BF_Move, BattleFieldManager.Instance.MyPlayerIndex.ToString() + "," + posX + "," + posY + "," + pos.x + "," + pos.y + "," + pos.z }
+            { (byte)ParaCode.BF_Move, Index + "," + posX + "," + posY + "," + pos.x + "," + pos.y + "," + pos.z }
         };
         PhotonEngine.peer.OpCustom((byte)OpCode, data, true);
     }

@@ -31,23 +31,28 @@ public class Arrow : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("触发！！");
-        if (collision.transform.CompareTag("Hero") && collision.transform.GetComponent<HeroModel>().PlayerIndex != OwnerIndex)
+        if (collision.transform.CompareTag("Hero") && collision.transform.GetComponent<HeroModel>().Index != OwnerIndex)
         {
             //Instantiate(HurtFX1, new Vector3(collision.transform.position.x, collision.transform.position.y + 2.5f, collision.transform.position.z), Quaternion.identity);
-            if (BattleFieldManager.Instance.GetPlayer(OwnerIndex).ISME)
+            if (((HeroModel)BattleFieldManager.Instance.GetEntity(OwnerIndex)).ISME)
                 target.SendHurtRequest(10, OwnerIndex);
-            //BattleFieldRequest.Instance.HurtRequest(collision.transform.GetComponent<HeroMove>().PlayerIndex, BattleFieldManager.Instance.GetPlayer(Owner).GetComponent<HeroAttack>().Damage);
+            //BattleFieldRequest.Instance.HurtRequest(collision.transform.GetComponent<HeroMove>().Index, BattleFieldManager.Instance.GetEntity(Owner).GetComponent<HeroAttack>().Damage);
             Debug.Log("人物攻击");
             Instantiate(HurtFX, new Vector3(collision.transform.position.x, collision.transform.position.y + 1, collision.transform.position.z), Quaternion.identity);
             Destroy(this.gameObject);
         }
         else if (collision.transform.CompareTag("Tower"))
         {
-            if (BattleFieldManager.Instance.GetPlayer(OwnerIndex).ISME)
+            if (((HeroModel)BattleFieldManager.Instance.GetEntity(OwnerIndex)).ISME)
                 target.SendHurtRequest(10, OwnerIndex);
 
             Instantiate(HurtFX, new Vector3(collision.transform.position.x, collision.transform.position.y + 5.6f, collision.transform.position.z), Quaternion.identity);
             Destroy(this.gameObject);
+        }
+        else if (collision.transform.CompareTag("Soldier"))
+        {
+            if (((HeroModel)BattleFieldManager.Instance.GetEntity(OwnerIndex)).ISME)
+                target.SendHurtRequest(10, OwnerIndex);
         }
     }
 }

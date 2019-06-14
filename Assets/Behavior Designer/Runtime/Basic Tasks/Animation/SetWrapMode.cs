@@ -8,17 +8,20 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimation
     {
         [Tooltip("The GameObject that the task operates on. If null the task GameObject is used.")]
         public SharedGameObject targetGameObject;
+
         [Tooltip("How should time beyond the playback range of the clip be treated?")]
         public WrapMode wrapMode = WrapMode.Default;
 
         // cache the animation component
         private Animation animation;
+
         private GameObject prevGameObject;
 
         public override void OnStart()
         {
             var currentGameObject = GetDefaultGameObject(targetGameObject.Value);
-            if (currentGameObject != prevGameObject) {
+            if (currentGameObject != prevGameObject)
+            {
                 animation = currentGameObject.GetComponent<Animation>();
                 prevGameObject = currentGameObject;
             }
@@ -26,7 +29,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimation
 
         public override TaskStatus OnUpdate()
         {
-            if (animation == null) {
+            if (animation == null)
+            {
                 Debug.LogWarning("Animation is null");
                 return TaskStatus.Failure;
             }

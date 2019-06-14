@@ -36,16 +36,16 @@ public class GUIHPParticleScript : MonoBehaviour {
 		GUI.Box ( new Rect (10,10,150,Screen.height -20), "");
 
 		//make label
-		GUI.Label(new Rect(20, 20, 200, 25),"HP Particle Settings");
+		GUI.Label(new Rect(20, 20, 200, 25),"Health Particle Settings");
 
 		//make label
 		GUI.Label(new Rect(20, 60, 200, 25),"FadeSpeed");
 
-		//set the FadeSpeed of the HP Particles
+		//set the FadeSpeed of the Health Particles
 		FadeSpeed = GUI.HorizontalSlider(new Rect(20, 80, 100, 25), FadeSpeed, 0.1F, 10F);
 		HPP.GetComponent<HPParticleScript>().FadeSpeed = FadeSpeed;
 
-		//set the way the HP Particle will be be displayed
+		//set the way the Health Particle will be be displayed
 		if (ChangeHPType == 0)
 		{
 			HPParticleTypeName = "Default Color & Force"; //standard or default

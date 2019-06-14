@@ -8,7 +8,7 @@ public class LB_LightingTrigger_Direct : MonoBehaviour
     private MobileColorGrading current;
     private MobileColorGrading temp;
 
-    [Tooltip("Target camera tag for trigger enter and exit")]
+    [Tooltip("FinalTarget camera tag for trigger enter and exit")]
     public string cameraTag = "MainCamera";
 
     [Tooltip("Blend lerp speed * Time.deltaTime")]

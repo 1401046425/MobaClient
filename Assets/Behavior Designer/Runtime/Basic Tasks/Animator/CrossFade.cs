@@ -8,12 +8,16 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
     {
         [Tooltip("The GameObject that the task operates on. If null the task GameObject is used.")]
         public SharedGameObject targetGameObject;
+
         [Tooltip("The name of the state")]
         public SharedString stateName;
+
         [Tooltip("The duration of the transition. Value is in source state normalized time")]
         public SharedFloat transitionDuration;
+
         [Tooltip("The layer where the state is")]
         public int layer = -1;
+
         [Tooltip("The normalized time at which the state will play")]
         public float normalizedTime = float.NegativeInfinity;
 
@@ -23,7 +27,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
         public override void OnStart()
         {
             var currentGameObject = GetDefaultGameObject(targetGameObject.Value);
-            if (currentGameObject != prevGameObject) {
+            if (currentGameObject != prevGameObject)
+            {
                 animator = currentGameObject.GetComponent<Animator>();
                 prevGameObject = currentGameObject;
             }
@@ -31,7 +36,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
 
         public override TaskStatus OnUpdate()
         {
-            if (animator == null) {
+            if (animator == null)
+            {
                 Debug.LogWarning("Animator is null");
                 return TaskStatus.Failure;
             }

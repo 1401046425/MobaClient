@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Common;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 
 public class BattleFieldManager : MonoBehaviour
 {
@@ -24,6 +24,7 @@ public class BattleFieldManager : MonoBehaviour
     public int MyPlayerIndex = 0;
     public List<HeroModel> PlayerList = new List<HeroModel>();
     public List<TowerModel> TowerList = new List<TowerModel>();
+    public List<Soldier> SoldierList = new List<Soldier>();
     private HeroModel Myplayer;
     public int JOINNUM;
     public BattleFieldCamp MyCamp = BattleFieldCamp.None;
@@ -78,44 +79,46 @@ public class BattleFieldManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        Debug.Log(delayTime);
     }
 
     private void 这个函数是用来修复BUG的为什么这个函数这么长而且要用中文我就想说你管我我乐意()
     {
         if (MyPlayerIndex == 1 && PhotonEngine.PhotonEngine_INS.ClientIndex == 2)
         {
-            GetPlayer(1).ISME = false;
-            InitBattleField(GetPlayer(2));
-            if (GetPlayer(2).ISME && MyPlayerIndex == 2)
+            ((HeroModel)GetEntity(1)).ISME = false;
+            InitBattleField(((HeroModel)GetEntity(2)));
+            if (((HeroModel)GetEntity(2)).ISME && MyPlayerIndex == 2)
             {
                 CancelInvoke("这个函数是用来修复BUG的为什么这个函数这么长而且要用中文我就想说你管我我乐意");
             }
         }
     }
 
-    public HeroModel GetPlayer(int PlayerIndex)
+
+    public Soldier GetSoldier(int SoldierIndex)
     {
-        HeroModel Player = null;
-        foreach (var item in PlayerList)
+        Soldier soldier = null;
+        foreach (var item in SoldierList)
         {
-            if (item.PlayerIndex == PlayerIndex)
+            if (item.Index == SoldierIndex)
             {
-                Player = item;
+                soldier = item;
             }
         }
-        return Player;
+        return soldier;
     }
+
+
 
     public void InitBattleField(HeroModel p)//初始化自己人物角色的函数
     {
         //初始化场景
         Debug.Log("调用");
-        //p.PlayerIndex = MyPlayerIndex;
+        //p.Index = MyPlayerIndex;
         p.ISME = true;
         // PlayerList.Add(p);
         Myplayer = p;
-        switch (p.PlayerIndex)
+        switch (p.Index)
         {
             case 1:
                 MyCamp = BattleFieldCamp.Red;
@@ -128,9 +131,9 @@ public class BattleFieldManager : MonoBehaviour
             default:
                 break;
         }
-        Debug.Log("摄像机初始化的玩家" + p.PlayerIndex);
+        Debug.Log("摄像机初始化的玩家" + p.Index);
         CameraFollow.cameraFollow.enabled = true;
-        CameraFollow.cameraFollow.Init(p.transform, CPos[Myplayer.PlayerIndex - 1]);
+        CameraFollow.cameraFollow.Init(p.transform, CPos[Myplayer.Index - 1]);
     }
 
     public void OnAttack()
@@ -155,26 +158,26 @@ public class BattleFieldManager : MonoBehaviour
                 {
                     //转换成int
                     int i = Convert.ToInt16(Playerinfo[0]);
-                    if (GetPlayer(i) == null)
+                    if (GetEntity(i) == null)
                     {
                         var Hero = Resources.Load("Prefab/Hero/" + Playerinfo[1]);
                         HeroModel p = (Instantiate(Hero, HPos[i - 1].position, Quaternion.identity) as GameObject).GetComponent<HeroModel>();
-                        p.PlayerIndex = i;
+                        p.Index = i;
                         PlayerList.Add(p);
-                        switch (p.PlayerIndex)
+                        switch (p.Index)
                         {
                             case 1:
-                                p.HeroCamp = BattleFieldCamp.Red;
+                                p.Camp = BattleFieldCamp.Red;
                                 break;
 
                             case 2:
-                                p.HeroCamp = BattleFieldCamp.Blue;
+                                p.Camp = BattleFieldCamp.Blue;
                                 break;
 
                             default:
                                 break;
                         }
-                        if (p.PlayerIndex == MyPlayerIndex)
+                        if (p.Index == MyPlayerIndex)
                         {
                             Debug.Log("我的序号:" + MyPlayerIndex);
                             InitBattleField(p);
@@ -190,24 +193,13 @@ public class BattleFieldManager : MonoBehaviour
         InvokeRepeating("这个函数是用来修复BUG的为什么这个函数这么长而且要用中文我就想说你管我我乐意", 0.01f, 0.01f);
     }
 
-    internal void DestoryTarget(int para)
-    {
-        if (para < 1000)
-        {
-            DestoryPlayer(para);
-        }
-        else if (para >= 1000)
-        {
-            DestoryTower(para);
-        }
-    }
 
     internal TowerModel GetTower(int HurtTowerIndex)
     {
         TowerModel Tower = null;
         foreach (var item in TowerList)
         {
-            if (item.TowerIndex == HurtTowerIndex)
+            if (item.Index == HurtTowerIndex)
             {
                 Tower = item;
             }
@@ -215,30 +207,93 @@ public class BattleFieldManager : MonoBehaviour
         return Tower;
     }
 
-    internal void DestoryPlayer(int playerIndex)
+    internal EntityModel GetEntity(int Index)
     {
-        if (GetPlayer(playerIndex) != null)
+        EntityModel Entity = null;
+        if (Index > 6000)
         {
-            GetPlayer(playerIndex).PlayDestory();
-        }
-    }
-
-    internal void DestoryTower(int TowerIndex)
-    {
-        if (GetTower(TowerIndex) != null)
-        {
-            GetTower(TowerIndex).PlayDestory();
-        }
-    }
-
-    internal void TestPlayerPos(int playerIndex, float posx, float posy, float posz)
-    {
-        //客户端玩家角色同步坐标
-        ////////////////////////
-        {
-            if (GetPlayer(playerIndex) != null && playerIndex != MyPlayerIndex)
+            foreach (var item in SoldierList)
             {
-                var player = GetPlayer(playerIndex);
+                if (item.Index == Index)
+                {
+                    Entity = item;
+                }
+            }
+        }
+        else if (Index > 1000)
+        {
+            foreach (var item in TowerList)
+            {
+                if (item.Index == Index)
+                {
+                    Entity = item;
+                }
+            }
+        }
+        else
+        {
+            foreach (var item in PlayerList)
+            {
+                if (item.Index == Index)
+                {
+                    Entity = item;
+                }
+            }
+        }
+        return Entity;
+
+    }
+
+    internal void DestoryEntity(int Index)
+    {
+        if (GetEntity(Index) != null)
+        {
+            if (Index > 6000)
+            {
+            var soldier =  (Soldier) GetEntity(Index);
+            soldier.PlayDestory();
+            }
+            else if (Index > 1000)
+            {
+                var Tower = (TowerModel)GetEntity(Index);
+                Tower.PlayDestory();
+            }
+            else
+            {
+                var Hero = (HeroModel)GetEntity(Index);
+                Hero.PlayDestory();
+            }
+        }
+
+    }
+
+
+    internal void TestEntityPos(int Index, float posx, float posy, float posz)
+    {
+        if (Index > 6000)
+        {
+            if (GetEntity(Index) != null)
+            {
+                var soldier = (Soldier)GetEntity(Index);
+                var v = new Vector3(soldier.DirX, soldier.DirZ) * delayTime * Time.fixedDeltaTime;
+                // var newpos = new Vector3(posx, posy, posz);
+                var newpos = new Vector3(posx + v.x, posy, posz + v.y);
+                var dir = soldier.transform.position - newpos;
+                soldier.transform.position = newpos;
+                if ((dir.magnitude > 1f))
+                {
+                    //newpos = new Vector3(posx + v.x, posy, posz + v.y);
+                    Debug.Log("同步坐标");
+                    soldier.transform.position = newpos;
+                    // }
+                }
+            }
+        }
+        else
+        {
+            if (GetEntity(Index) != null && Index != MyPlayerIndex)
+            {
+                var player = (HeroModel)GetEntity(Index);
 
                 var v = new Vector3(player.Hero_Move.DirX, player.Hero_Move.DirZ) * delayTime * Time.fixedDeltaTime;
                 // var newpos = new Vector3(posx, posy, posz);
@@ -253,8 +308,8 @@ public class BattleFieldManager : MonoBehaviour
                     // }
                 }
             }
-            ///////////////////////
         }
+
     }
 
     internal void CheckResult(int ResultIndex)
@@ -272,45 +327,26 @@ public class BattleFieldManager : MonoBehaviour
         PhotonEngine.PhotonEngine_INS.RemoveRequest(PhotonEngine.PhotonEngine_INS.GetRequest(OperationCode.BattleField));
         SceneManager.LoadSceneAsync(0);
     }
-
     internal void HurtTarget(int HurtPlayer, int HurtDamage)
     {
-        if (HurtPlayer >= 1000)
+        var HurtTarget = GetEntity(HurtPlayer);
+        Debug.Log("受伤的对象ID"+HurtTarget.Index);
+        if (HurtTarget.Health > 0)
         {
-            var HurtTarget = GetTower(HurtPlayer);
-            Debug.Log("攻击塔！！");
-            if (HurtTarget.HP > 0)
+            HurtTarget.Health -= HurtDamage;
+            HurtDamageFX.transform.Find("HPLabel").GetComponent<TextMesh>().text = "-" + HurtDamage;
+            Instantiate(HurtDamageFX, new Vector3(HurtTarget.transform.position.x, HurtTarget.transform.position.y + 3.14f, HurtTarget.transform.position.z), Quaternion.identity);
+            if (HurtTarget.Health <= 0)
             {
-                HurtTarget.HP -= HurtDamage;
-                HurtDamageFX.transform.Find("HPLabel").GetComponent<TextMesh>().text = "-" + HurtDamage;
-                Instantiate(HurtDamageFX, new Vector3(HurtTarget.transform.position.x, HurtTarget.transform.position.y + 5.6f, HurtTarget.transform.position.z), Quaternion.identity);
-                if (HurtTarget.HP <= 0)
-                {
-                    BattleFieldRequest.Instance.DestoryRequest(HurtTarget.TowerIndex);
-                    Debug.Log("塔打爆了！");
-                }
-            }
-        }
-        else
-        {
-            var HurtTarget = GetPlayer(HurtPlayer);
-            if (HurtTarget.HP > 0)
-            {
-                HurtTarget.HP -= HurtDamage;
-                HurtDamageFX.transform.Find("HPLabel").GetComponent<TextMesh>().text = "-" + HurtDamage;
-                Instantiate(HurtDamageFX, new Vector3(HurtTarget.transform.position.x, HurtTarget.transform.position.y + 2.5f, HurtTarget.transform.position.z), Quaternion.identity);
-                if (HurtTarget.HP <= 0)
-                {
-                    BattleFieldRequest.Instance.EndRequest(HurtTarget.PlayerIndex);
-                }
+                BattleFieldRequest.Instance.DestoryRequest(HurtTarget.Index);
             }
         }
     }
 
     internal void AttackPlayer(int HurtPlayerIndex, int AttackPlayerIndex, AttackType attackType)
     {
-        print("被打玩家：" + HurtPlayerIndex + "攻击玩家" + AttackPlayerIndex + "攻击类型" + attackType);
-        var HeroAttackCtl = GetPlayer(AttackPlayerIndex).GetComponent<HeroAttack>();
+        //print("被打玩家：" + HurtPlayerIndex + "攻击玩家" + AttackPlayerIndex + "攻击类型" + attackType);
+        var HeroAttackCtl = GetEntity(AttackPlayerIndex).GetComponent<HeroAttack>();
         switch (attackType)
         {
             case AttackType.Normal:
@@ -334,20 +370,41 @@ public class BattleFieldManager : MonoBehaviour
             Myplayer.Hero_Attack.Attack(AttackType.Skill1);
     }
 
-    internal void MovePlayer(int index, float x, float z, float PlayerX, float PlayerY, float PlayerZ)
+    internal void MoveEntity(int index, float x, float z, float PlayerX, float PlayerY, float PlayerZ)
     {
         //拿到对应Index的对象
         //设置移动对象
-        foreach (var item in PlayerList)
+
+        if (index > 6000)
         {
-            //拿到对应的index对象
-            if (item.PlayerIndex == index)
+
+            foreach (var item in SoldierList)
             {
-                //设置对象
-                item.Hero_Move.DirX = x * delayTime;
-                item.Hero_Move.DirZ = z * delayTime;
+                //拿到对应的index对象
+                if (item.Index == index)
+                {
+                    //设置对象
+                    item.DirX = x * delayTime;
+                    item.DirZ = z * delayTime;
+                    if (item.Camp != MyCamp)item.transform.position=new Vector3(PlayerX,PlayerY,PlayerZ);
+                }
             }
         }
+        else
+        {
+            foreach (var item in PlayerList)
+            {
+                //拿到对应的index对象
+                if (item.Index == index)
+                {
+                    //设置对象
+                    item.Hero_Move.DirX = x * delayTime;
+                    item.Hero_Move.DirZ = z * delayTime;
+                    if (item.Camp != MyCamp) item.transform.position = new Vector3(PlayerX, PlayerY, PlayerZ);
+                }
+            }
+        }
+
     }
 }
 

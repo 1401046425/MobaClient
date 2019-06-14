@@ -36,7 +36,7 @@ public class CameraFollow : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (BattleFieldManager.Instance.GetPlayer(BattleFieldManager.Instance.MyPlayerIndex) != null && HBtransform.position != null && Offset.x != 0)
+        if (BattleFieldManager.Instance.GetEntity(BattleFieldManager.Instance.MyPlayerIndex) != null && HBtransform.position != null && Offset.x != 0)
         {
             transform.position = HBtransform.position - Offset * DIRdistance;
         }

@@ -1,27 +1,27 @@
-﻿// this script controls the HP and Instantiates an HP Particle
+﻿// this script controls the Health and Instantiates an Health Particle
 
 using UnityEngine;
 using System.Collections;
 
 public class HPScript : MonoBehaviour {
 
-	//the current HP of the character/gameobject
+	//the current Health of the character/gameobject
 	public float HP; 
 
-	//the HP Particle
+	//the Health Particle
 	public GameObject HPParticle;
 
 	//Default Forces
 	public Vector3 DefaultForce = new Vector3(0f,1f,0f);
 	public float DefaultForceScatter = 0.5f;
 
-	//Change the HP without an effect
+	//Change the Health without an effect
 	public void ChangeHP(float Delta)
 	{
 		HP = HP + Delta;
 	}
 
-	//Change the HP and Instantiates an HP Particle with a Custom Force and Color
+	//Change the Health and Instantiates an Health Particle with a Custom Force and Color
 	public void ChangeHP(float Delta,Vector3 Position, Vector3 Force, float ForceScatter, Color ThisColor)
 	{
 		HP = HP + Delta;
@@ -45,7 +45,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(Force.x + Random.Range(-ForceScatter,ForceScatter),Force.y + Random.Range(-ForceScatter,ForceScatter),Force.z + Random.Range(-ForceScatter,ForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with a Custom Force
+	//Change the Health and Instantiates an Health Particle with a Custom Force
 	public void ChangeHP(float Delta,Vector3 Position, Vector3 Force, float ForceScatter)
 	{
 		HP = HP + Delta;
@@ -69,7 +69,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(Force.x + Random.Range(-ForceScatter,ForceScatter),Force.y + Random.Range(-ForceScatter,ForceScatter),Force.z + Random.Range(-ForceScatter,ForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with a Custom Color
+	//Change the Health and Instantiates an Health Particle with a Custom Color
 	public void ChangeHP(float Delta,Vector3 Position, Color ThisColor)
 	{
 		HP = HP + Delta;
@@ -93,7 +93,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce(new Vector3(DefaultForce.x + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.y + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.z + Random.Range(-DefaultForceScatter,DefaultForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with default force and color
+	//Change the Health and Instantiates an Health Particle with default force and color
 	public void ChangeHP(float Delta,Vector3 Position)
 	{
 		HP = HP + Delta;
@@ -118,7 +118,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(DefaultForce.x + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.y + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.z + Random.Range(-DefaultForceScatter,DefaultForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with Custom Text
+	//Change the Health and Instantiates an Health Particle with Custom Text
 	public void ChangeHP(float Delta,Vector3 Position, string text)
 	{
 		HP = HP + Delta;
@@ -142,7 +142,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(DefaultForce.x + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.y + Random.Range(-DefaultForceScatter,DefaultForceScatter),DefaultForce.z + Random.Range(-DefaultForceScatter,DefaultForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with Custom Text and Force,
+	//Change the Health and Instantiates an Health Particle with Custom Text and Force,
 	public void ChangeHP(float Delta,Vector3 Position, Vector3 Force, float ForceScatter, string text)
 	{
 		HP = HP + Delta;
@@ -166,7 +166,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(Force.x + Random.Range(-ForceScatter,ForceScatter),Force.y + Random.Range(-ForceScatter,ForceScatter),Force.z + Random.Range(-ForceScatter,ForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with Custom Text, Force and Color
+	//Change the Health and Instantiates an Health Particle with Custom Text, Force and Color
 	public void ChangeHP(float Delta,Vector3 Position, Vector3 Force, float ForceScatter, Color ThisColor, string text)
 	{
 		HP = HP + Delta;
@@ -181,7 +181,7 @@ public class HPScript : MonoBehaviour {
 		NewHPP.GetComponent<Rigidbody>().AddForce( new Vector3(Force.x + Random.Range(-ForceScatter,ForceScatter),Force.y + Random.Range(-ForceScatter,ForceScatter),Force.z + Random.Range(-ForceScatter,ForceScatter)));
 	}
 
-	//Change the HP and Instantiates an HP Particle with Custom Text and Color
+	//Change the Health and Instantiates an Health Particle with Custom Text and Color
 	public void ChangeHP(float Delta,Vector3 Position, Color ThisColor, string text)
 	{
 		HP = HP + Delta;

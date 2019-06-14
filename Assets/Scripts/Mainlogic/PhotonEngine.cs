@@ -13,8 +13,8 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     public GameObject MachingManager;
     public int ClientIndex;
     private Dictionary<OperationCode, Request> RequestDic = new Dictionary<OperationCode, Request>();
-    public const string ServerIp = "192.168.3.2";
-
+    public const string ServerIp = "localhost";
+    private StatusCode Client_ConnectState;
     public void AddRequest(Request R)
     {
         RequestDic.Add(R.OpCode, R);
@@ -59,7 +59,7 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
     //当与服务器连接时执行
     public void OnStatusChanged(StatusCode statusCode)
     {
-        Debug.Log(statusCode);
+        Client_ConnectState = statusCode;
     }
 
     public void JoinTheGame(int Playerindex, HeroType heroType)
@@ -123,5 +123,10 @@ public class PhotonEngine : MonoBehaviour, IPhotonPeerListener
         {
             peer.Disconnect();
         }
+    }
+
+    private void OnGUI()
+    {
+        GUI.Box(new Rect(10, 10, 100, 90), Client_ConnectState.ToString());
     }
 }

@@ -34,7 +34,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Movement
                 return TaskStatus.Success;
             }
 
-            // Target will return the predicated position
+            // FinalTarget will return the predicated position
             SetDestination(Target());
 
             return TaskStatus.Running;

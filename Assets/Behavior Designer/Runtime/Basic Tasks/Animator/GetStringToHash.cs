@@ -8,6 +8,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
     {
         [Tooltip("The name of the state to convert to a hash code")]
         public SharedString stateName;
+
         [Tooltip("The hash value")]
         [RequiredField]
         public SharedInt storeValue;

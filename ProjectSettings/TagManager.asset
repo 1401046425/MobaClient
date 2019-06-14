@@ -10,6 +10,7 @@ TagManager:
   - trail
   - loweffect
   - Tower
+  - Soldier
   layers:
   - Default
   - TransparentFX

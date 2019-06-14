@@ -8,6 +8,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
     {
         [Tooltip("The GameObject that the task operates on. If null the task GameObject is used.")]
         public SharedGameObject targetGameObject;
+
         [Tooltip("The avatar delta rotation")]
         [RequiredField]
         public SharedQuaternion storeValue;
@@ -18,7 +19,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
         public override void OnStart()
         {
             var currentGameObject = GetDefaultGameObject(targetGameObject.Value);
-            if (currentGameObject != prevGameObject) {
+            if (currentGameObject != prevGameObject)
+            {
                 animator = currentGameObject.GetComponent<Animator>();
                 prevGameObject = currentGameObject;
             }
@@ -26,7 +28,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
 
         public override TaskStatus OnUpdate()
         {
-            if (animator == null) {
+            if (animator == null)
+            {
                 Debug.LogWarning("Animator is null");
                 return TaskStatus.Failure;
             }
@@ -38,7 +41,8 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityAnimator
 
         public override void OnReset()
         {
-            if (storeValue != null) {
+            if (storeValue != null)
+            {
                 storeValue.Value = Quaternion.identity;
             }
         }

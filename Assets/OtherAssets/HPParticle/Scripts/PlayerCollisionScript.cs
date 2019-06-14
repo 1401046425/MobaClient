@@ -1,4 +1,4 @@
-﻿// This Script changes the player's HP when the player get's hit by a projectile
+﻿// This Script changes the player's Health when the player get's hit by a projectile
 
 using UnityEngine;
 using System.Collections;
