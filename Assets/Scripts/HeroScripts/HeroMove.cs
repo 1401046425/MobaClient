@@ -66,11 +66,15 @@ public class HeroMove : MonoBehaviour
         {
             if (Model.Index == 1)
             {
-                moveVector = (Vector3.right * ETCInput.GetAxis("Vertical") + Vector3.back * ETCInput.GetAxis("Horizontal"));
+                //moveVector = (Vector3.right * ETCInput.GetAxis("Vertical") + Vector3.back * ETCInput.GetAxis("Horizontal"));
+                moveVector.x = ETCInput.GetAxis("Horizontal");
+                moveVector.z = ETCInput.GetAxis("Vertical");
             }
             else if (Model.Index == 2)
             {
-                moveVector = (Vector3.left * ETCInput.GetAxis("Vertical") + Vector3.forward * ETCInput.GetAxis("Horizontal"));
+                //moveVector = (Vector3.left * ETCInput.GetAxis("Vertical") + Vector3.forward * ETCInput.GetAxis("Horizontal"));
+                moveVector.x = -ETCInput.GetAxis("Horizontal");
+                moveVector.z = -ETCInput.GetAxis("Vertical");
             }
             BattleFieldRequest.Instance.MoveRequest(moveVector.x, moveVector.z, transform.position, BattleFieldManager.Instance.MyPlayerIndex);
 

@@ -46,6 +46,7 @@ public class TowerModel : EntityModel
         else
         {
             Line.gameObject.SetActive(false);
+            Circle.SetActive(false);
         }
 
         if (EnterEntity.Count >0&&!isAttacking)
@@ -107,6 +108,7 @@ public class TowerModel : EntityModel
 
     private void Attack()
     {
+        if(IsDead)return;
         //创建火球
         isAttacking = true;
         Fire = Instantiate(FireFB, transform.position + new Vector3(0, 5.6f, 0), Quaternion.identity);
@@ -143,8 +145,9 @@ public class TowerModel : EntityModel
     internal void PlayDestory()
     {
         Instantiate(Resources.Load("Tower/TowerFX/Boom"), transform.position, Quaternion.identity);
-        GetComponent<HealthBar>().healthLink.targetScript = null;
-       //transform.Translate(Vector3.down * 25);
+        Health = -1;
+        GetComponent<HealthBar>().drawDistance = 0.1f;
+        //transform.Translate(Vector3.down * 25);
         gameObject.SetActive(false);
         //GetTower(Index).gameObject.SetActive(false);
         //Destroy(GetTower(Index).gameObject);

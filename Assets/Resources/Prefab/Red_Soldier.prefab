@@ -507,6 +507,7 @@ GameObject:
   - component: {fileID: 8116169901815672115}
   - component: {fileID: 506704010131875797}
   - component: {fileID: 1177498793648663560}
+  - component: {fileID: -5190245156791455897}
   m_Layer: 0
   m_Name: Red_Soldier
   m_TagString: Soldier
@@ -573,6 +574,10 @@ MonoBehaviour:
   CurTargetList: []
   DirX: 0
   DirZ: 0
+  canseeColliders: []
+  Distence: 10
+  Dis: 0
+  Target: {fileID: 0}
 --- !u!114 &1465762960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,6 +667,18 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.67, z: 0}
+--- !u!114 &-5190245156791455897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5770663962184154345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03985ffeebf0b8849bc1d13fd041f2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5770663962184154347
 GameObject:
   m_ObjectHideFlags: 0
